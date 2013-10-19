@@ -54,6 +54,12 @@ def _lwrite(path, content):
 
   try:
     os.rename(lock, path)
+  except WindowsError:
+    try:
+      shutil.move(lock, path)
+    except OSError:
+      os.remove(lock)
+      raise
   except OSError:
     os.remove(lock)
     raise
