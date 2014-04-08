@@ -224,6 +224,10 @@ class _CopyFile:
       try:
         # remove existing file first, since it might be read-only
         if os.path.exists(dest):
+          # Ensure that it is writable to ensure that we may delete it
+          mode = os.stat(dest)[stat.ST_MODE]
+          mode = mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
+          os.chmod(dest, mode)
           os.remove(dest)
         else:
           dest_dir = os.path.dirname(dest)
